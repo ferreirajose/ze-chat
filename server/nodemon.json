@@ -1,0 +1,8 @@
+{
+    "watch": ["*.js", "routes/*.js"],
+    "ignore": ["*.test.js"],
+    "delay": "1000",
+    "env": {
+      "NODE_ENV": "development"
+    }
+  }
