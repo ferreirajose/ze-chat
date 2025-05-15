@@ -5,6 +5,9 @@
 # dependencies
 /server/node_modules
 /server/uploads
+# Ignorar todos arquivos .env reais
+/server/envs/.env.*
+!envs/.env.example
 
 # next.js
 /.next/

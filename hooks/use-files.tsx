@@ -180,7 +180,7 @@ export const useFiles = create<FilesStore>((set, get) => ({
       const formData = new FormData()
       formData.append('file', fileData, file.name)
 
-      await axios.post('http://localhost:3000/upload', formData, {
+      await axios.post('http://localhost:3000/api/upload', formData, {
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
