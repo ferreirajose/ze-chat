@@ -5,6 +5,8 @@
 # dependencies
 /server/node_modules
 /server/uploads
+/server/midia/
+/server/uploads
 # Ignorar todos arquivos .env reais
 /server/envs/.env.*
 !envs/.env.example

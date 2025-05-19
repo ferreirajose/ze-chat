@@ -1,8 +1,8 @@
 const { downloader } = require('../services/downloadVideoService');
 const { createMP3 } = require('../services/createMP3Service');
-const { transcribeAudio: localTranscribe } = require('../services/transcriberService');
-const { transcribeAudio: openaiTranscribe } = require('../services/transcriptionService');
-const { extractVideoId } = require('../../helpers/extractVideoId');
+const { transcribeAudio: localTranscribe } = require('../services/transcriptionXenovaService');
+const { transcribeAudio: openaiTranscribe } = require('../services/transcriptionOpenAiService');
+const { extractVideoId, uuidGenerator } = require('../../helpers/extractVideoId');
 
 const transcribeAudioCtrl = async (req, res) => {
   try {
@@ -96,8 +96,11 @@ const transcribeAudioCtrl = async (req, res) => {
           status: 'complete',
           progress: 100,
           data: {
+            id: uuidGenerator(),
             text: transcription.text,
-            source: useOpenAI ? 'openai' : 'local'
+            source: useOpenAI ? 'openai' : 'local',
+            audioUrl: "url-do-audio"
+
           }
         });
 

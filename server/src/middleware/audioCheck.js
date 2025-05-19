@@ -1,28 +1,3 @@
-// require('dotenv').config();
-
-// const path = require('path');
-// const fs = require('fs');
-
-// // Adicione no início do transcribeAudioCtrl, após verificar o videoId
-// const audioDir = path.join(process.env.MIDIA_FOLDER || './midia');
-// if (!fs.existsSync(audioDir)) {
-//     fs.mkdirSync(audioDir, { recursive: true });
-// }
-
-// // Adicione esta verificação após a conversão para WAV
-// const checkAudioFile = (filePath) => {
-//     try {
-//         const stats = fs.statSync(filePath);
-//         if (stats.size < 1024) { // Menos de 1KB = provavelmente inválido
-//             throw new Error('Arquivo de áudio muito pequeno ou inválido');
-//         }
-//         return true;
-//     } catch (error) {
-//         throw new Error(`Falha ao verificar arquivo de áudio: ${error.message}`);
-//     }
-// };
-
-// middleware/audioCheck.js (novo arquivo)
 require('dotenv').config();
 
 const path = require('path');
