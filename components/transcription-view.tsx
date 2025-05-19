@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranscriptionData } from "@/hooks/transcription-context";
 import { useState, useRef } from "react";
 interface TranscriptionViewProps {
   fileName?: string
@@ -9,27 +10,26 @@ type TranscriptionTab = "resumo" | "original" | "formatada"
 
 export function TranscriptionView({ fileName = "natureza-mae.mp4" }: TranscriptionViewProps) {
 
+  const { data } = useTranscriptionData();
+
   const [activeTab, setActiveTab] = useState<TranscriptionTab>("resumo")
   const audioRef = useRef<HTMLAudioElement>(null)
 
+  console.log(data, 'TranscriptionView')
   const transcriptionContent = {
     resumo: (
       <p className="dark:text-gray-300">
-        Resumo: Este é um resumo da transcrição. Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-        <span className="bg-blue-100 dark:bg-blue-900/30 px-1">Destaque importante</span> no resumo.
+       { data?.summary || "Nenhum resumo disponível."}
       </p>
     ),
     original: (
       <p className="dark:text-gray-300">
-        Transcrição original: Este é o texto original sem formatação. When an unknown printer took a galley of type and
-        scrambled it to make a type specimen book. It has survived not only five centuries.
+        { data?.originalText || "Nenhuma transcrição disponível." }
       </p>
     ),
     formatada: (
       <p className="dark:text-gray-300">
-        Transcrição formatada por IA: Este texto foi processado por IA. It was popularised in the 1960s with the release of
-        Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like
-        Aldus PageMaker including versions of Lorem Ipsum.
+        { data?.formattedText || "Nenhuma transcrição formatada disponível." }
       </p>
     )
   }
@@ -99,36 +99,19 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
         </div>
   
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 p-1 flex">
-          <button
-            className={`py-4 px-4 font-medium rounded-md transition-colors ${
-              activeTab === "resumo"
-                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-            }`}
-            onClick={() => setActiveTab("resumo")}
-          >
-            Resumo
-          </button>
-          <button
-            className={`py-4 px-4 font-medium rounded-md transition-colors ${
-              activeTab === "original"
-                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-            }`}
-            onClick={() => setActiveTab("original")}
-          >
-            Transcrição original
-          </button>
-          <button
-            className={`py-4 px-4 font-medium rounded-md transition-colors ${
-              activeTab === "formatada"
-                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-            }`}
-            onClick={() => setActiveTab("formatada")}
-          >
-            Transcrição formatada por IA
-          </button>
+           {["resumo", "original", "formatada"].map(tab => (
+            <button
+              key={tab}
+              className={`py-4 px-4 font-medium rounded-md transition-colors ${
+                activeTab === tab
+                  ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+              }`}
+              onClick={() => setActiveTab(tab as TranscriptionTab)}
+            >
+              {tab === "resumo" ? "Resumo" : tab === "original" ? "Transcrição original" : "Transcrição formatada por IA"}
+            </button>
+          ))}
         </div>
   
         <div className="prose max-w-none dark:prose-invert">

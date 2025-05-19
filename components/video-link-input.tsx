@@ -3,8 +3,11 @@
 import { useState } from "react"
 import { FileText, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 import { useFiles } from "@/hooks/use-files"
+import { useTranscriptionData } from "@/hooks/transcription-context"
 
 export function VideoLinkInput() {
+  const { setData } = useTranscriptionData()
+
   const [videoLink, setVideoLink] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [status, setStatus] = useState<{
@@ -85,12 +88,22 @@ export function VideoLinkInput() {
                     content: data.data?.text || ""
                   }
                   addFile(newFile)
+
+                  console.log(data, 'VideoLinkInput')
+
+                  // ADICIONANDO O RETORNO DA API NO HOOK use-transcription.ts, PARA PODER PEGAR AS INFORMAÇÕES EM OUTROS COMPONENTES
+                  setData({
+                    audioUrl: data.data.audio_url, // Certifique-se de que o backend envie isso
+                    originalText: data.data.text,
+                    formattedText: data.data.formatted_text,
+                    summary: data.data.summary
+                  })
                   //setTimeout(resetForm, 2000) // Reset após 2 segundos
                 }
 
                 if (data.status === 'error') {
                   setError(data.error || "Erro desconhecido")
-                  //setTimeout(resetForm, 2000) // Reset após 2 segundos
+                  setTimeout(resetForm, 2000) // Reset após 2 segundos
                 }
               } catch (e) {
                 console.error('Erro ao parsear JSON:', e)
