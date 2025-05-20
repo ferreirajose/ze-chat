@@ -10,6 +10,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_AUTH_TOKEN = process.env.API_AUTH_TOKEN;
 
 export function VideoLinkInput() {
+
   const { setData } = useTranscriptionData()
   const [videoLink, setVideoLink] = useState("")
   const [error, setError] = useState<string | null>(null)

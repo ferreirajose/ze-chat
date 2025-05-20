@@ -158,7 +158,7 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
           </div>
         </div>
   
-        <div className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 p-1 flex">
+        <div className="bg-gray-100 dark:bg-gray-700 border rounded-lg mb-4 flex">
            {["resumo", "original", "formatada"].map(tab => (
             <button
               key={tab}

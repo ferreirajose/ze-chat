@@ -6,8 +6,6 @@
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start -p 8080",
-    "build:prod": "NEXT_PUBLIC_ENV=production next build",
-    "start:prod": "NEXT_PUBLIC_ENV=production next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -45,6 +43,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "date-fns": "^3.3.1",
+    "dotenv": "^16.5.0",
     "embla-carousel-react": "8.5.1",
     "immer": "latest",
     "input-otp": "1.4.1",
