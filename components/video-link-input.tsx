@@ -5,6 +5,7 @@ import { FileText, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 import { useFiles } from "@/hooks/use-files"
 import { useTranscriptionData } from "@/hooks/transcription-context"
 import axios from "axios";
+import { downloadAudio, transcribeAudio } from "@/services/transcriptionService"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_AUTH_TOKEN = process.env.API_AUTH_TOKEN;
@@ -32,54 +33,147 @@ export function VideoLinkInput() {
     setError(null)
   }
 
-  const transcribeAudio = async (audioBlob: Blob, filename: string) => {
-    try {
-      setStatus(prev => ({
-        ...prev,
-        stage: 'transcribing',
-        progress: 60,
-        message: 'Transcrevendo áudio...'
-      }))
+  // const transcribeAudio = async (audioBlob: Blob, filename: string) => {
+  //   try {
+  //     setStatus(prev => ({
+  //       ...prev,
+  //       stage: 'transcribing',
+  //       progress: 60,
+  //       message: 'Transcrevendo áudio...'
+  //     }))
 
-      const formData = new FormData()
-      formData.append('uploaded_file', audioBlob, filename)
+  //     const formData = new FormData()
+  //     formData.append('uploaded_file', audioBlob, filename)
       
-      const response = await axios.post(
-        `${API_BASE_URL}/transcreve_audio_via_upload`, formData,
-        {
-          params: { save_in_db: false },
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${API_AUTH_TOKEN}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
+  //     const response = await axios.post(
+  //       `${API_BASE_URL}/transcreve_audio_via_upload`, formData,
+  //       {
+  //         params: { save_in_db: false },
+  //         headers: {
+  //           'Accept': 'application/json',
+  //           'Authorization': `Bearer ${API_AUTH_TOKEN}`,
+  //           'Content-Type': 'multipart/form-data'
+  //         }
+  //       }
+  //     );
 
-      const transcriptionData = response.data
+  //     const transcriptionData = response.data
       
-      setStatus(prev => ({
-        ...prev,
-        progress: 100,
-        status: 'complete',
-        message: 'Transcrição concluída',
-        data: {
-          text: transcriptionData.texto || "Transcrição concluída",
-          source: 'remote'
-        }
-      }))
+  //     setStatus(prev => ({
+  //       ...prev,
+  //       progress: 100,
+  //       status: 'complete',
+  //       message: 'Transcrição concluída',
+  //       data: {
+  //         text: transcriptionData.texto || "Transcrição concluída",
+  //         source: 'remote'
+  //       }
+  //     }))
 
-      return {
-        originalText: transcriptionData.texto,
-        formattedText: transcriptionData.texto_formatado,
-        summary: "" // Ajuste conforme a API retornar resumos no futuro
-      }
+  //     return {
+  //       originalText: transcriptionData.texto,
+  //       formattedText: transcriptionData.texto_formatado,
+  //       summary: "" // Ajuste conforme a API retornar resumos no futuro
+  //     }
 
-    } catch (error) {
-      console.error('Transcription error:', error)
-      throw error
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Transcription error:', error)
+  //     throw error
+  //   }
+  // }
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setError(null)
+  //   setStatus({
+  //     stage: 'starting',
+  //     progress: 0,
+  //     message: 'Iniciando processo...'
+  //   })
+
+  //   if (!videoLink.trim()) {
+  //     setError("Por favor, insira um link do YouTube")
+  //     return
+  //   }
+
+  //   try {
+  //     setStatus({
+  //       stage: 'downloading',
+  //       progress: 30,
+  //       message: 'Baixando áudio...'
+  //     })
+
+  //     // 1. Download do áudio
+  //     const downloadResponse = await axios.get(
+  //       `${API_BASE_URL}/download_audio/`,
+  //       {
+  //         params: { url: videoLink },
+  //         headers: {
+  //           'Accept': 'application/json',
+  //           'Authorization': `Bearer ${API_AUTH_TOKEN}`
+  //         },
+  //         responseType: 'blob'
+  //       }
+  //     );
+
+  //     // Processa os dados do download
+  //     const contentDisposition = downloadResponse.headers['content-disposition']
+  //     const filename = contentDisposition 
+  //       ? decodeURIComponent(contentDisposition.split("filename*=utf-8''")[1])
+  //       : `audio-${Date.now()}.mp4`
+
+  //     const videoMetadata = downloadResponse.headers['x-video-metadata']
+  //     const metadata = videoMetadata ? JSON.parse(videoMetadata) : null
+
+  //     const audioBlob = new Blob([downloadResponse.data], { 
+  //       type: downloadResponse.headers['content-type'] 
+  //     })
+  //     const audioUrl = URL.createObjectURL(audioBlob)
+
+  //     // 2. Transcrever o áudio
+  //     const transcription = await transcribeAudio(audioBlob, filename)
+
+  //     // 3. Atualizar estado e contexto
+  //     const newFile: any = {
+  //       id: Date.now().toString(),
+  //       name: filename,
+  //       size: downloadResponse.headers['content-length'] || "Unknown",
+  //       type: "audio" as const,
+  //       status: "complete" as const,
+  //       progress: 100,
+  //       content: audioUrl
+  //     }
+  //     addFile(newFile)
+
+  //     setData({
+  //       audioUrl: audioUrl,
+  //       originalText: transcription.originalText,
+  //       formattedText: transcription.formattedText,
+  //       summary: transcription.summary
+  //     })
+
+  //   } catch (error) {
+  //     console.error('Error:', error)
+  //     let errorMessage = "Ocorreu um erro desconhecido"
+      
+  //     if (axios.isAxiosError(error)) {
+  //       if (error.response?.data?.detail) {
+  //         errorMessage = error.response.data.detail[0]?.msg || "Erro na requisição"
+  //       } else {
+  //         errorMessage = error.message
+  //       }
+  //     } else if (error instanceof Error) {
+  //       errorMessage = error.message
+  //     }
+
+  //     setError(errorMessage)
+  //     setStatus({
+  //       status: 'error',
+  //       message: 'Erro no processamento'
+  //     })
+  //     setTimeout(resetForm, 2000)
+  //   }
+  // }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,53 +190,46 @@ export function VideoLinkInput() {
     }
 
     try {
+      // 1. Baixar o áudio
       setStatus({
         stage: 'downloading',
         progress: 30,
         message: 'Baixando áudio...'
       })
 
-      // 1. Download do áudio
-      const downloadResponse = await axios.get(
-        `${API_BASE_URL}/download_audio/`,
-        {
-          params: { url: videoLink },
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${API_AUTH_TOKEN}`
-          },
-          responseType: 'blob'
-        }
-      );
-
-      // Processa os dados do download
-      const contentDisposition = downloadResponse.headers['content-disposition']
-      const filename = contentDisposition 
-        ? decodeURIComponent(contentDisposition.split("filename*=utf-8''")[1])
-        : `audio-${Date.now()}.mp4`
-
-      const videoMetadata = downloadResponse.headers['x-video-metadata']
-      const metadata = videoMetadata ? JSON.parse(videoMetadata) : null
-
-      const audioBlob = new Blob([downloadResponse.data], { 
-        type: downloadResponse.headers['content-type'] 
-      })
+      const { audioBlob, filename } = await downloadAudio(videoLink)
       const audioUrl = URL.createObjectURL(audioBlob)
 
       // 2. Transcrever o áudio
+      setStatus({
+        stage: 'transcribing',
+        progress: 60,
+        message: 'Transcrevendo áudio...'
+      })
+
       const transcription = await transcribeAudio(audioBlob, filename)
 
       // 3. Atualizar estado e contexto
       const newFile: any = {
         id: Date.now().toString(),
         name: filename,
-        size: downloadResponse.headers['content-length'] || "Unknown",
+        size: audioBlob.size,
         type: "audio" as const,
         status: "complete" as const,
         progress: 100,
         content: audioUrl
       }
       addFile(newFile)
+
+      setStatus({
+        progress: 100,
+        status: 'complete',
+        message: 'Transcrição concluída',
+        data: {
+          text: transcription.originalText || "Transcrição concluída",
+          source: 'remote'
+        }
+      })
 
       setData({
         audioUrl: audioUrl,
@@ -154,7 +241,7 @@ export function VideoLinkInput() {
     } catch (error) {
       console.error('Error:', error)
       let errorMessage = "Ocorreu um erro desconhecido"
-      
+
       if (axios.isAxiosError(error)) {
         if (error.response?.data?.detail) {
           errorMessage = error.response.data.detail[0]?.msg || "Erro na requisição"
