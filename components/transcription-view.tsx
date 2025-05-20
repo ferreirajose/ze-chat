@@ -9,28 +9,77 @@ interface TranscriptionViewProps {
 type TranscriptionTab = "resumo" | "original" | "formatada"
 
 export function TranscriptionView({ fileName = "natureza-mae.mp4" }: TranscriptionViewProps) {
-
   const { data } = useTranscriptionData();
-
-  const [activeTab, setActiveTab] = useState<TranscriptionTab>("resumo")
+  const [activeTab, setActiveTab] = useState<TranscriptionTab>("original") // Mudei padrão para "original"
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  console.log(data, 'TranscriptionView')
-  const transcriptionContent = {
+  const handleDownloadAudio = () => {
+    if (!data?.audioUrl) return;
+    
+    const link = document.createElement('a');
+    link.href = data.audioUrl;
+    link.download = fileName || 'audio.mp3';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownloadText = () => {
+    let content = '';
+    let extension = '.txt';
+    
+    switch (activeTab) {
+      case 'resumo':
+        content = data?.summary || '';
+        break;
+      case 'original':
+        content = data?.originalText || '';
+        break;
+      case 'formatada':
+        content = data?.formattedText || '';
+        break;
+    }
+
+    if (!content) return;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${fileName || 'transcricao'}-${activeTab}${extension}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+  
+    const transcriptionContent = {
     resumo: (
-      <p className="dark:text-gray-300">
-       { data?.summary || "Nenhum resumo disponível."}
-      </p>
+      <div className="prose dark:prose-invert max-w-none">
+        {data?.summary ? (
+          <p className="whitespace-pre-wrap dark:text-gray-300">{data.summary}</p>
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">Nenhum resumo disponível.</p>
+        )}
+      </div>
     ),
     original: (
-      <p className="dark:text-gray-300">
-        { data?.originalText || "Nenhuma transcrição disponível." }
-      </p>
+      <div className="prose dark:prose-invert max-w-none">
+        {data?.originalText ? (
+          <p className="whitespace-pre-wrap dark:text-gray-300">{data.originalText}</p>
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">Nenhuma transcrição original disponível.</p>
+        )}
+      </div>
     ),
     formatada: (
-      <p className="dark:text-gray-300">
-        { data?.formattedText || "Nenhuma transcrição formatada disponível." }
-      </p>
+      <div className="prose dark:prose-invert max-w-none">
+        {data?.formattedText ? (
+          <p className="whitespace-pre-wrap dark:text-gray-300">{data.formattedText}</p>
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">Nenhuma transcrição formatada disponível.</p>
+        )}
+      </div>
     )
   }
 
@@ -41,21 +90,29 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
           Transcrição: <span className="font-normal">{fileName}</span>
         </h2>
   
-        {/* Audio player and download buttons in the same line */}
+        {/* Audio player and download buttons */}
         <div className="flex items-center gap-4 mb-6">
-          {/* Audio player - will take approximately 60% of space */}
-          <div className="w-[60%]"> {/* 3 partes de 5 = 60% */}
+          <div className="w-[60%]">
             <audio 
               controls
               ref={audioRef}
-              src="../sound/ac-dc-back-in-black.mp3"
+              src={data?.audioUrl || undefined}
               className="w-full"
             />
+            {!data?.audioUrl && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Nenhum áudio disponível
+              </p>
+            )}
           </div>
           
-          {/* Download buttons - will take approximately 40% of space (2 partes de 5) */}
-          <div className="flex gap-2 flex-grow-[1] min-w-0"> {/* 2 partes de 5 = 40% */}
-            <button className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 flex-1 justify-center min-w-0">
+          <div className="flex gap-2 flex-grow-[1] min-w-0">
+            <button 
+              onClick={handleDownloadAudio}
+              disabled={!data?.audioUrl}
+              className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 flex-1 justify-center min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="truncate">Download áudio</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -72,9 +129,13 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" x2="12" y1="15" y2="3" />
               </svg>
-              <span className="truncate">Download áudio</span>
             </button>
-            <button className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 flex-1 justify-center min-w-0">
+            <button 
+              onClick={handleDownloadText}
+              disabled={!data?.[activeTab === 'resumo' ? 'summary' : activeTab === 'original' ? 'originalText' : 'formattedText']}
+              className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 flex-1 justify-center min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="truncate">Download texto</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -93,7 +154,6 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
                 <line x1="16" x2="8" y1="17" y2="17" />
                 <line x1="10" x2="8" y1="9" y2="9" />
               </svg>
-              <span className="truncate">Download texto</span>
             </button>
           </div>
         </div>
@@ -114,9 +174,7 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
           ))}
         </div>
   
-        <div className="prose max-w-none dark:prose-invert">
-          {transcriptionContent[activeTab]}
-        </div>
+        {transcriptionContent[activeTab]}
       </div>
     </div>
   )

@@ -6,6 +6,8 @@
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start -p 8080",
+    "build:prod": "NEXT_PUBLIC_ENV=production next build",
+    "start:prod": "NEXT_PUBLIC_ENV=production next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -58,7 +60,6 @@
     "sonner": "^1.7.1",
     "tailwind-datepicker-react": "^1.4.3",
     "tailwind-merge": "^2.5.5",
-    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss-animate": "^1.0.7",
     "use-sync-external-store": "latest",
     "vaul": "^0.9.6",
