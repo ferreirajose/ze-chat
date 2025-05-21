@@ -91,7 +91,7 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
         </h2>
   
         {/* Audio player and download buttons */}
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-4 mb-4">
           <div className="w-[60%]">
             <audio 
               controls
@@ -99,11 +99,7 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
               src={data?.audioUrl || undefined}
               className="w-full"
             />
-            {!data?.audioUrl && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Nenhum áudio disponível
-              </p>
-            )}
+           
           </div>
           
           <div className="flex gap-2 flex-grow-[1] min-w-0">
@@ -157,7 +153,13 @@ export function TranscriptionView({ fileName = "natureza-mae.mp4" }: Transcripti
             </button>
           </div>
         </div>
-  
+
+         {!data?.audioUrl && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              Nenhum áudio disponível
+            </p>
+          )}
+          
         <div className="bg-gray-100 dark:bg-gray-700 border rounded-lg mb-4 flex">
            {["resumo", "original", "formatada"].map(tab => (
             <button

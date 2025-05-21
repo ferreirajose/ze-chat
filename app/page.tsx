@@ -30,7 +30,7 @@ export default function Home() {
               <TranscriptionView fileName="Audio.mp3" />
             </div>
 
-            <div className="text-center text-gray-500 dark:text-gray-400 mt-6 text-sm">
+            <div className="text-gray-500 dark:text-gray-400 mt-6 text-sm">
               Tribunal de Contas de Pernambuco (TCE-PE) - Aurora Transcrições v1.0
             </div>
           </div>

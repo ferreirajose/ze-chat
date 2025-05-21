@@ -10,6 +10,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		 padding: {
+			'custom': '1.3rem 1.47rem',
+      	},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

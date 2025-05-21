@@ -54,3 +54,43 @@ export async function transcribeAudio(audioBlob: Blob, filename: string) {
     summary: "" // Ajuste conforme necessário
   }
 }
+
+export async function uploadAndTranscribe(
+  file: File,
+  onProgress?: (progress: number, isUploadComplete: boolean) => void
+): Promise<any> {
+  try {
+    const formData = new FormData();
+    formData.append("uploaded_file", file, file.name);
+
+    const response = await axios.post(
+      `${API_BASE_URL}/transcreve_audio_via_upload`,
+      formData,
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${API_AUTH_TOKEN}`,
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          if (onProgress) {
+            const progress = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1))
+            // Indica que é apenas progresso do upload (não da requisição completa)
+            onProgress(progress, false);
+          }
+        },
+      }
+    );
+
+    return {
+      audioUrl: URL.createObjectURL(file),
+      originalText: response.data.texto,
+      formattedText: response.data.texto_formatado,
+      summary: response.data.resumo || "",
+    };
+  } catch (error) {
+    console.error("Error in uploadAndTranscribe:", error);
+    throw error;
+  }
+}
