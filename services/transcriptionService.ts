@@ -57,14 +57,15 @@ export async function transcribeAudio(audioBlob: Blob, filename: string) {
 
 export async function uploadAndTranscribe(
   file: File,
-  onProgress?: (progress: number, isUploadComplete: boolean) => void
+  onProgress?: (progress: number, isUploadComplete: boolean) => void,
+  deleteAfterProcessing: boolean = false
 ): Promise<any> {
   try {
     const formData = new FormData();
     formData.append("uploaded_file", file, file.name);
 
     const response = await axios.post(
-      `${API_BASE_URL}/transcreve_audio_via_upload`,
+      `${API_BASE_URL}/transcreve_audio_via_upload?save_in_db=${!deleteAfterProcessing}`,
       formData,
       {
         headers: {

@@ -17,6 +17,7 @@ export function UploadFile() {
   const [isUploading, setIsUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [fileName, setFileName] = useState<string | null>(null)
+  const [deleteAfterProcessing, setDeleteAfterProcessing] = useState(false);
 
   const validateFile = (file: File): boolean => {
     const extension = `.${file.name.split('.').pop()?.toLowerCase()}`
@@ -35,38 +36,36 @@ export function UploadFile() {
     return true
   }
 
-const handleFiles = async (files: FileList) => {
-  if (files.length > 1) {
-    setError('Apenas um arquivo pode ser enviado por vez');
-    return;
-  }
+  const handleFiles = async (files: FileList) => {
+    if (files.length > 1) {
+      setError('Apenas um arquivo pode ser enviado por vez');
+      return;
+    }
 
-  const file = files[0];
-  if (!validateFile(file)) return;
+    const file = files[0];
+    if (!validateFile(file)) return;
 
-  setIsUploading(true);
-  setProgress(0);
-  setFileName(file.name);
-
-  try {
-    const result = await uploadAndTranscribe(file, (progress, isUploadComplete) => {
-      // Atualiza o progresso, mas só mostra 100% quando tudo estiver completo
-      setProgress(isUploadComplete ? 100 : Math.min(progress, 99));
-    });
-    
-    setData(result);
-    setProgress(100); // Só agora marca como 100% completo
-    setError(null);
-  } catch (error) {
-    console.error('Upload error:', error);
-    setError(getErrorMessage(error));
+    setIsUploading(true);
     setProgress(0);
-  } finally {
-    setIsUploading(false);
-  }
-};
+    setFileName(file.name);
 
-// ... (restante do componente permanece igual)
+    try {
+      const result = await uploadAndTranscribe(file, (progress, isUploadComplete) => {
+        // Atualiza o progresso, mas só mostra 100% quando tudo estiver completo
+        setProgress(isUploadComplete ? 100 : Math.min(progress, 99));
+      }, deleteAfterProcessing);
+      
+      setData(result);
+      setProgress(100); // Só agora marca como 100% completo
+      setError(null);
+    } catch (error) {
+      console.error('Upload error:', error);
+      setError(getErrorMessage(error));
+      setProgress(0);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const getErrorMessage = (error: unknown): string => {
     if (axios.isAxiosError(error)) {
