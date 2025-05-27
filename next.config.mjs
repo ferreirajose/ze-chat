@@ -30,6 +30,7 @@ const nextConfig = {
     API_AUTH_TOKEN: process.env.API_AUTH_TOKEN,
     ENV: process.env.NEXT_PUBLIC_ENV || 'development'
   },
+  devIndicators: false
 }
 
 export default nextConfig

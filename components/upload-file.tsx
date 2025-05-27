@@ -101,10 +101,9 @@ export function UploadFile() {
     <div>
       <div className="flex items-center mb-6">
         <div className="bg-teal-600 p-custom rounded-lg mr-4 text-white">
-          <img src={`/logo-aurora.svg`} alt={'Logo Aurora Transcrições'} width="40" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-teal-600 dark:text-teal-400">AURORA</h1>
+          <h1 className="text-2xl font-bold text-teal-600 dark:text-teal-400">ZÉ</h1>
           <h2 className="text-xl font-bold text-teal-600 dark:text-teal-400">TRANSCRIÇÕES</h2>
         </div>
       </div>

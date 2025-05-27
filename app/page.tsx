@@ -18,7 +18,7 @@ export default function Home() {
           </div>
 
           <div className="md:col-span-2">
-            <h1 className="text-3xl font-bold text-teal-600 dark:text-teal-400 mb-2">Olá, eu sou a Aurora.</h1>
+            <h1 className="text-3xl font-bold text-teal-600 dark:text-teal-400 mb-2">Olá, eu sou a Zé</h1>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               A sua assistente inteligente de transcrições, projetada para transformar suas gravações em textos precisos
               e de alta qualidade, de forma rápida e eficiente.
@@ -31,7 +31,7 @@ export default function Home() {
             </div>
 
             <div className="text-gray-500 dark:text-gray-400 mt-6 text-sm">
-              Tribunal de Contas de Pernambuco (TCE-PE) - Aurora Transcrições v1.0
+              Zé Transcrições v1.0
             </div>
           </div>
         </div>

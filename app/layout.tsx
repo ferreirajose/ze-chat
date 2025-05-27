@@ -9,7 +9,7 @@ import { TranscriptionProvider } from "@/hooks/transcription-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Aurora Transcrições",
+  title: "Zé Transcrições",
   description: "Serviço de transcrição de áudio e vídeo",
     generator: 'v0.dev'
 }
